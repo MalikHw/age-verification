@@ -7,21 +7,13 @@
         "ios": "2.2081"
     },
     "version": "1.0.0",
-    "id": "malikhw47.smth",
-    "name": "nam",
+    "id": "malikhw47.ageverification",
+    "name": "Age Verification",
     "developer": "MalikHw47",
-    "description": "desc.",
-    "tags": ["yes", "yeah"],
+    "description": "Totally necessary age verification before accessing the main menu! Very secure",
+    "tags": ["joke"],
     "links": {
-        "source": "https://github.com/MalikHw/geode-template",
+        "source": "https://github.com/MalikHw/age-verification",
         "community": "https://discord.gg/G9bZ92eg2n"
-    },
-    "settings": {},
-    "suggested": [
-        {
-            "id": "something",
-            "importance": "recommended",
-            "reason": "n"
-        }
-    ]
+    }
 }
