@@ -3,30 +3,28 @@
 
 using namespace geode::prelude;
 
-class AgeVerificationPopup;
-class ManualInputPopup;
-class NineAndTenPopup;
-
 // nineandtenpopup
-class NineAndTenPopup : public geode::Popup<NineAndTenPopup*> {
+
+class NineAndTenPopup : public geode::Popup<> {
 protected:
     CCTextInputNode* m_input = nullptr;
 
     bool setup() override {
         this->setTitle("One Last Check...");
 
+        auto windowSize = m_mainLayer->getContentSize();
+
         auto bg = CCScale9Sprite::create("GJ_square05.png", {0, 0, 80, 80});
-        bg->setContentSize(m_mainLayer->getContentSize() - CCSize(20, 20));
-        bg->setPosition(m_mainLayer->getContentSize() / 2);
+        bg->setContentSize(windowSize - CCSize(20, 20));
+        bg->setPosition(windowSize / 2);
         bg->setOpacity(80);
         m_mainLayer->addChild(bg, -1);
 
-        auto windowSize = m_mainLayer->getContentSize();
-
-        auto lbl = CCLabelBMFont::create("What is 9 + 10?\nPlease answer either 19 or 21.", "bigFont.fnt");
+        auto lbl = CCLabelBMFont::create(
+            "What is 9 + 10?\nPlease answer either 19 or 21.", "bigFont.fnt");
         lbl->setScale(0.45f);
-        lbl->setPosition(windowSize / 2 + CCPoint(0, 40));
         lbl->setAlignment(kCCTextAlignmentCenter);
+        lbl->setPosition(windowSize / 2 + CCPoint(0, 40));
         m_mainLayer->addChild(lbl);
 
         auto inputBg = CCScale9Sprite::create("square02_001.png", {0, 0, 80, 80});
@@ -35,7 +33,7 @@ protected:
         inputBg->setOpacity(100);
         m_mainLayer->addChild(inputBg);
 
-        m_input = CCTextInputNode::create(120.f, 30.f, "Enter answer...", "bigFont.fnt", 24);
+        m_input = CCTextInputNode::create(120.f, 30.f, "Enter answer...", 24, "bigFont.fnt");
         m_input->setPosition(windowSize / 2);
         m_input->setMaxLabelWidth(120.f);
         m_input->setMaxLabelScale(0.7f);
@@ -44,7 +42,8 @@ protected:
 
         auto btn = CCMenuItemSpriteExtra::create(
             ButtonSprite::create("Submit", "bigFont.fnt", "GJ_button_01.png"),
-            this, menu_selector(NineAndTenPopup::onSubmit)
+            this,
+            menu_selector(NineAndTenPopup::onSubmit)
         );
         btn->setScale(0.8f);
 
@@ -61,22 +60,27 @@ protected:
 
         if (ans == "19") {
             FLAlertLayer::create("Hmm...", "We've detected you may be a minor.", "OK")->show();
+#ifndef GEODE_IS_ANDROID
             ParentalOptionsLayer::create()->show();
             FLAlertLayer::create("Notice", "Please invite a parent to verify this.", "OK")->show();
+#endif
             this->onClose(nullptr);
         } else if (ans == "21") {
             FLAlertLayer::create("Hmm...", "We've detected you may be a teen.", "OK")->show();
+#ifndef GEODE_IS_ANDROID
             ParentalOptionsLayer::create()->show();
+#endif
             this->onClose(nullptr);
         } else {
-            FLAlertLayer::create("Invalid Answer", "Invalid answer. Please answer either 19 or 21.", "OK")->show();
+            FLAlertLayer::create(
+                "Invalid Answer", "Please answer either 19 or 21.", "OK")->show();
         }
     }
 
 public:
     static NineAndTenPopup* create() {
         auto ret = new NineAndTenPopup();
-        if (ret->initAnchored(300.f, 200.f)) {
+        if (ret->init(300.f, 200.f)) {
             ret->autorelease();
             return ret;
         }
@@ -86,12 +90,13 @@ public:
 };
 
 // manualinputpopup
-class ManualInputPopup : public geode::Popup<ManualInputPopup*> {
+
+class ManualInputPopup : public geode::Popup<> {
 protected:
-    Slider* m_ageSlider = nullptr;
-    Slider* m_yearSlider = nullptr;
-    CCLabelBMFont* m_ageLbl = nullptr;
-    CCLabelBMFont* m_yearLbl = nullptr;
+    Slider*          m_ageSlider  = nullptr;
+    Slider*          m_yearSlider = nullptr;
+    CCLabelBMFont*   m_ageLbl     = nullptr;
+    CCLabelBMFont*   m_yearLbl    = nullptr;
 
     int getAge()  { return 1    + (int)roundf(m_ageSlider->getValue()  * 99.f);  }
     int getYear() { return 1924 + (int)roundf(m_yearSlider->getValue() * 101.f); }
@@ -99,13 +104,13 @@ protected:
     bool setup() override {
         this->setTitle("Manual Age Input");
 
+        auto windowSize = m_mainLayer->getContentSize();
+
         auto bg = CCScale9Sprite::create("GJ_square05.png", {0, 0, 80, 80});
-        bg->setContentSize(m_mainLayer->getContentSize() - CCSize(20, 20));
-        bg->setPosition(m_mainLayer->getContentSize() / 2);
+        bg->setContentSize(windowSize - CCSize(20, 20));
+        bg->setPosition(windowSize / 2);
         bg->setOpacity(80);
         m_mainLayer->addChild(bg, -1);
-
-        auto windowSize = m_mainLayer->getContentSize();
 
         auto ageTitleLbl = CCLabelBMFont::create("Age:", "bigFont.fnt");
         ageTitleLbl->setScale(0.5f);
@@ -139,7 +144,8 @@ protected:
 
         auto confirmBtn = CCMenuItemSpriteExtra::create(
             ButtonSprite::create("Confirm", "bigFont.fnt", "GJ_button_01.png"),
-            this, menu_selector(ManualInputPopup::onConfirm)
+            this,
+            menu_selector(ManualInputPopup::onConfirm)
         );
         confirmBtn->setScale(0.85f);
 
@@ -184,7 +190,7 @@ protected:
 public:
     static ManualInputPopup* create() {
         auto ret = new ManualInputPopup();
-        if (ret->initAnchored(340.f, 220.f)) {
+        if (ret->init(340.f, 220.f)) {
             ret->autorelease();
             return ret;
         }
@@ -194,20 +200,22 @@ public:
 };
 
 // ageverificationpopup
-class AgeVerificationPopup : public geode::Popup<AgeVerificationPopup*> {
+
+class AgeVerificationPopup : public geode::Popup<> {
 protected:
     bool setup() override {
         this->setTitle("Age Verification");
 
+        auto windowSize = m_mainLayer->getContentSize();
+
         auto bg = CCScale9Sprite::create("GJ_square05.png", {0, 0, 80, 80});
-        bg->setContentSize(m_mainLayer->getContentSize() - CCSize(20, 20));
-        bg->setPosition(m_mainLayer->getContentSize() / 2);
+        bg->setContentSize(windowSize - CCSize(20, 20));
+        bg->setPosition(windowSize / 2);
         bg->setOpacity(80);
         m_mainLayer->addChild(bg, -1);
 
-        auto windowSize = m_mainLayer->getContentSize();
-
-        auto desc = CCLabelBMFont::create("Please verify your age\nto continue.", "bigFont.fnt");
+        auto desc = CCLabelBMFont::create(
+            "Please verify your age\nto continue.", "bigFont.fnt");
         desc->setScale(0.5f);
         desc->setAlignment(kCCTextAlignmentCenter);
         desc->setPosition(windowSize / 2 + CCPoint(0, 50));
@@ -215,19 +223,22 @@ protected:
 
         auto selfieBtn = CCMenuItemSpriteExtra::create(
             ButtonSprite::create("Selfie Check", "bigFont.fnt", "GJ_button_04.png"),
-            this, menu_selector(AgeVerificationPopup::onSelfie)
+            this,
+            menu_selector(AgeVerificationPopup::onSelfie)
         );
         selfieBtn->setScale(0.75f);
 
         auto govBtn = CCMenuItemSpriteExtra::create(
             ButtonSprite::create("Gov ID Check", "bigFont.fnt", "GJ_button_04.png"),
-            this, menu_selector(AgeVerificationPopup::onGovID)
+            this,
+            menu_selector(AgeVerificationPopup::onGovID)
         );
         govBtn->setScale(0.75f);
 
         auto manualBtn = CCMenuItemSpriteExtra::create(
             ButtonSprite::create("Manual Input", "bigFont.fnt", "GJ_button_01.png"),
-            this, menu_selector(AgeVerificationPopup::onManual)
+            this,
+            menu_selector(AgeVerificationPopup::onManual)
         );
         manualBtn->setScale(0.75f);
 
@@ -243,12 +254,13 @@ protected:
     }
 
     void onSelfie(CCObject*) {
-        FLAlertLayer::create("Unavailable", "Sorry, Persona is hard to implement.", "OK")->show();
+        FLAlertLayer::create(
+            "Unavailable", "Sorry, Persona is hard to implement.", "OK")->show();
     }
 
     void onGovID(CCObject*) {
-        // same thing lol
-        FLAlertLayer::create("Unavailable", "Sorry, Persona is hard to implement.", "OK")->show();
+        FLAlertLayer::create(
+            "Unavailable", "Sorry, Persona is hard to implement.", "OK")->show();
     }
 
     void onManual(CCObject*) {
@@ -259,7 +271,7 @@ protected:
 public:
     static AgeVerificationPopup* create() {
         auto ret = new AgeVerificationPopup();
-        if (ret->initAnchored(300.f, 240.f)) {
+        if (ret->init(300.f, 240.f)) {
             ret->autorelease();
             return ret;
         }
@@ -269,12 +281,17 @@ public:
 };
 
 // menulayer
+
 class $modify(MenuLayer) {
     bool init() {
         if (!MenuLayer::init()) return false;
 
-        if (!Mod::get()->getSavedValue<bool>("verified", false))
-            AgeVerificationPopup::create()->show();
+        if (!Mod::get()->getSavedValue<bool>("verified", false)) {
+            auto popup = AgeVerificationPopup::create();
+            // set m_scene so it shows correctly when called from init
+            popup->m_scene = this;
+            popup->show();
+        }
 
         return true;
     }
