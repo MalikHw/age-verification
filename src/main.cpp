@@ -9,7 +9,7 @@ class ManualInputPopup;
 class NineAndTenPopup;
 
 // nineandtenpopup
-class NineAndTenPopup : public geode::Popup<> {
+class NineAndTenPopup : public geode::Popup<NineAndTenPopup*> {
 protected:
     CCTextInputNode* m_input = nullptr;
 
@@ -36,7 +36,7 @@ protected:
         inputBg->setOpacity(100);
         m_mainLayer->addChild(inputBg);
 
-        m_input = CCTextInputNode::create(120.f, 30.f, "Enter answer...", "bigFont.fnt", 24, "bigFont.fnt");
+        m_input = CCTextInputNode::create(120.f, 30.f, "Enter answer...", "bigFont.fnt", 24);
         m_input->setPosition(windowSize / 2);
         m_input->setMaxLabelWidth(120.f);
         m_input->setMaxLabelScale(0.7f);
@@ -87,7 +87,7 @@ public:
 };
 
 // manualinputpopup
-class ManualInputPopup : public geode::Popup<> {
+class ManualInputPopup : public geode::Popup<ManualInputPopup*> {
 protected:
     Slider* m_ageSlider = nullptr;
     Slider* m_yearSlider = nullptr;
@@ -195,7 +195,7 @@ public:
 };
 
 // ageverificationpopup
-class AgeVerificationPopup : public geode::Popup<> {
+class AgeVerificationPopup : public geode::Popup<AgeVerificationPopup*> {
 protected:
     bool setup() override {
         this->setTitle("Age Verification");
